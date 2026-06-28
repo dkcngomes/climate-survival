@@ -101,16 +101,16 @@ export default function CropRecommendationCard({ crop, index }: Props) {
 
       {/* Tolerance badges */}
       <div className="flex flex-wrap gap-2 mb-3">
-        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200">
+        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200 text-gray-900">
           🌡️ {t("grow.heat")}: {toleranceIcon(crop.heatTolerance)} {crop.heatTolerance}
         </span>
-        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200">
+        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200 text-gray-900">
           ❄️ {t("grow.cold")}: {toleranceIcon(crop.coldTolerance)} {crop.coldTolerance}
         </span>
-        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200">
+        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200 text-gray-900">
           🏜️ {t("grow.drought")}: {toleranceIcon(crop.droughtTolerance)} {crop.droughtTolerance}
         </span>
-        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200">
+        <span className="text-xs px-2 py-1 rounded-full bg-white border border-gray-200 text-gray-900">
           🌊 {t("grow.flood")}: {toleranceIcon(crop.floodTolerance)} {crop.floodTolerance}
         </span>
       </div>
