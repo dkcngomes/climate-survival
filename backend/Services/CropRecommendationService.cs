@@ -12,11 +12,15 @@ public interface ICropRecommendationService
 public class CropRecommendationService : ICropRecommendationService
 {
     private readonly HttpClient _http;
+    private readonly IGeminiService _gemini;
+    private readonly ILogger<CropRecommendationService> _logger;
     private static readonly ConcurrentDictionary<string, (string? ImageUrl, string? WikiUrl)> ImageCache = new();
 
-    public CropRecommendationService(HttpClient http)
+    public CropRecommendationService(HttpClient http, IGeminiService gemini, ILogger<CropRecommendationService> logger)
     {
         _http = http;
+        _gemini = gemini;
+        _logger = logger;
     }
 
     private static readonly List<CropEntry> CropCatalog = new()
@@ -354,6 +358,19 @@ public class CropRecommendationService : ICropRecommendationService
         var now = DateTime.UtcNow;
         var plantByDate = now.Date;
 
+        // Determine agricultural region once for all scoring & Gemini
+        var region = DetermineRegion(forecast.Latitude, forecast.Longitude, countryCode);
+        var regionName = region switch
+        {
+            AgroRegion.Tropical => "Tropical",
+            AgroRegion.Arid => "Arid",
+            AgroRegion.Mediterranean => "Mediterranean",
+            AgroRegion.Subtropical => "Subtropical",
+            AgroRegion.Temperate => "Temperate",
+            AgroRegion.Boreal => "Boreal/Cold",
+            _ => "Unknown"
+        };
+
         var scored = new List<(CropEntry Crop, int Score, string Reason, string Tip)>();
 
         foreach (var crop in CropCatalog)
@@ -362,8 +379,6 @@ public class CropRecommendationService : ICropRecommendationService
             var reasons = new List<string>();
 
             // ── Regional relevance boost ──
-            // Determine the agricultural region once and reuse
-            var region = DetermineRegion(forecast.Latitude, forecast.Longitude, countryCode);
             if (RegionCrops.TryGetValue(region, out var regionCrops) && regionCrops.Contains(crop.Name))
             {
                 score += 15;
@@ -484,6 +499,53 @@ public class CropRecommendationService : ICropRecommendationService
             var cmp = b.Score.CompareTo(a.Score);
             return cmp != 0 ? cmp : a.Crop.DaysMin.CompareTo(b.Crop.DaysMin);
         });
+
+        // ── Gemini LLM reranking (enhances rule engine results) ──
+        if (_gemini.IsEnabled)
+        {
+            // Take top 20 for Gemini to rerank (keep others as-is)
+            var topCrops = scored.Take(20).Select(s => (s.Crop.Name, s.Score, s.Reason, s.Tip)).ToList();
+            var geminiResult = await _gemini.RerankCropsAsync(forecast, countryCode, regionName, topCrops, ct);
+
+            if (geminiResult?.RerankedCrops != null && geminiResult.RerankedCrops.Count > 0)
+            {
+                _logger.LogInformation("Gemini reranked {Count} crops — applying LLM enhancements", geminiResult.RerankedCrops.Count);
+
+                // Build a lookup of Gemini results by crop name
+                var geminiLookup = geminiResult.RerankedCrops
+                    .Where(g => g.SuitabilityScore >= 0)
+                    .ToDictionary(g => g.CropName, StringComparer.OrdinalIgnoreCase);
+
+                // Rebuild scored list: keep LLM scores for crops Gemini saw, rule scores for the rest
+                var geminiScored = new List<(CropEntry Crop, int Score, string Reason, string Tip)>();
+                foreach (var s in scored)
+                {
+                    if (geminiLookup.TryGetValue(s.Crop.Name, out var gem))
+                    {
+                        var tip = !string.IsNullOrEmpty(gem.GrowingTip)
+                            ? gem.GrowingTip
+                            : s.Tip;
+                        var reason = !string.IsNullOrEmpty(gem.RecommendationReason)
+                            ? gem.RecommendationReason
+                            : s.Reason;
+                        geminiScored.Add((s.Crop, Math.Clamp(gem.SuitabilityScore, 0, 100), reason, tip));
+                    }
+                    else
+                    {
+                        geminiScored.Add(s);
+                    }
+                }
+
+                // Re-sort by the updated (Gemini) scores
+                geminiScored.Sort((a, b) =>
+                {
+                    var cmp = b.Score.CompareTo(a.Score);
+                    return cmp != 0 ? cmp : a.Crop.DaysMin.CompareTo(b.Crop.DaysMin);
+                });
+
+                scored = geminiScored;
+            }
+        }
 
         var recommendations = new List<CropRecommendation>();
 

@@ -31,6 +31,10 @@ builder.Services.AddHttpClient<ICropRecommendationService, CropRecommendationSer
 // Email
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
+// Gemini LLM
+builder.Services.AddHttpClient<IGeminiService, GeminiService>()
+    .AddTransientHttpErrorPolicy(p => p.RetryAsync(1));
+
 // CORS — allow frontend (Next.js dev server & production)
 builder.Services.AddCors(options =>
 {
