@@ -9,11 +9,9 @@
   publish = "out/"
 
 # ── Proxy API requests to Hugging Face Space ──
-# ⚠️ Replace YOUR_HF_USERNAME below with your Hugging Face username
-# The Space name must match what you create on huggingface.co
 [[redirects]]
   from = "/api/*"
-  to   = "https://YOUR_HF_USERNAME-climate-survival-api.hf.space/api/:splat"
+  to   = "https://nipunadkcn-climate-survival-api.hf.space/api/:splat"
   status = 200
   force = true
 
