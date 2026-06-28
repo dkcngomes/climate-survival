@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "Climate Survival",
+    "subtitle": "Cultivo y preparación adaptados al clima para lo que viene",
+    "newLocation": "Nueva Ubicación"
+  },
+  "hero": {
+    "title": "Sobrevive y Prospera ante el Cambio Climático",
+    "description": "Descubre qué <strong>comprar y almacenar</strong> antes de que suban los precios, y qué <strong>cultivos plantar</strong> que sobrevivirán los cambios climáticos — con fechas de cosecha desde esta semana."
+  },
+  "location": {
+    "title": "Selecciona tu Ubicación",
+    "description": "Elige tu país o usa la geolocalización del navegador para resultados precisos.",
+    "detecting": "Detectando tu país...",
+    "country": "País",
+    "selectCountry": "— Selecciona un país —",
+    "getRecommendations": "Obtener Recomendaciones",
+    "or": "O",
+    "useMyLocation": "Usar Mi Ubicación Actual",
+    "usingLocation": "Usando tu ubicación del navegador"
+  },
+  "loading": "Analizando datos climáticos para tu ubicación...",
+  "error": {
+    "title": "Algo salió mal",
+    "tryAgain": "Intentar de Nuevo"
+  },
+  "climate": {
+    "outlook": "Perspectiva Climática",
+    "forecastConfidence": "Confianza del pronóstico",
+    "temperature": "Temperatura",
+    "precipitation": "Precipitación",
+    "seasonalAnomaly": "anomalía estacional",
+    "hydrometeo": "Datos Hidrometeorológicos",
+    "soilMoisture": "Humedad del Suelo",
+    "dry": "Seca",
+    "saturated": "Saturada",
+    "drought": "Sequía",
+    "floodRisk": "Riesgo de Inundación",
+    "stormRisk": "Riesgo de Tormenta",
+    "riverDischarge": "Caudal del río",
+    "maxWindGust": "Ráfaga máxima",
+    "precip3day": "Precip. 3 días",
+    "peakIntensity": "Intensidad máxima",
+    "detectedSignals": "Señales Climáticas Detectadas"
+  },
+  "forecast": {
+    "horizon": "Horizonte del Pronóstico",
+    "horizonDesc": "{{period}} — las recomendaciones de almacenamiento y cultivo se basan en este pronóstico para tu área."
+  },
+  "stockUp": {
+    "title": "Abastecerse — Qué Comprar Ahora",
+    "description": "Es probable que estos productos aumenten de precio o escaseen según las señales climáticas detectadas. Cómpralos ahora.",
+    "action": "Acción",
+    "storage": "Almacenamiento"
+  },
+  "grow": {
+    "title": "Cultiva Tu Propio — Cultivos para las Condiciones Venideras",
+    "description": "Estos cultivos están seleccionados para sobrevivir los cambios climáticos pronosticados en tu área. Planta ahora para cosechar en las próximas semanas y meses.",
+    "strategy": "Estrategia de Cultivo para tu Área",
+    "whyGrow": "Por qué cultivarlo",
+    "planting": "Siembra",
+    "tip": "Consejo",
+    "plantBy": "Plantar antes",
+    "harvest": "Cosecha",
+    "harvestIn": "Cosecha en",
+    "days": "días",
+    "match": "coincidencia",
+    "heat": "Calor",
+    "cold": "Frío",
+    "drought": "Sequía",
+    "flood": "Inundación"
+  },
+  "noStorage": {
+    "title": "Almacenamiento: No se Necesita Acción Urgente",
+    "description": "Las condiciones climáticas en tu área son normales. No se necesita almacenamiento urgente, pero las recomendaciones de cultivo pueden ayudar a construir seguridad alimentaria a largo plazo."
+  },
+  "risk": {
+    "overall": "Nivel de Riesgo Climático General",
+    "items": "{{count}} artículo recomendado para compra anticipada",
+    "items_plural": "{{count}} artículos recomendados para compra anticipada",
+    "itemsAndCrops": "{{items}} para almacenar · {{crops}} cultivos recomendados para plantar"
+  },
+  "footer": {
+    "dataSources": "Fuentes: Open-Meteo (pronóstico estacional, clima, inundaciones) y World Bank (precios de commodities)",
+    "generated": "Generado {{date}}",
+    "developedBy": "Desarrollado por"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "contact": {
+    "title": "Contáctenos",
+    "description": "¿Tiene una pregunta, sugerencia o informe de error? Nos encantaría saber de usted.",
+    "backToHome": "Volver al Inicio",
+    "name": "Nombre",
+    "namePlaceholder": "Su nombre completo",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "su@correo.com",
+    "subject": "Asunto",
+    "subjectPlaceholder": "— Seleccione un asunto —",
+    "subjectBug": "Reportar Error",
+    "subjectFeature": "Solicitar Función",
+    "subjectData": "Consulta de Datos",
+    "subjectPartner": "Asociación",
+    "subjectOther": "Otro",
+    "message": "Mensaje",
+    "messagePlaceholder": "Cuéntenos más sobre su pregunta o comentario...",
+    "send": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "thankYou": "¡Gracias!",
+    "successMessage": "Su mensaje ha sido recibido. Le responderemos lo antes posible.",
+    "errorGeneric": "Algo salió mal. Por favor, inténtelo de nuevo más tarde."
+  }
+}

@@ -1,0 +1,44 @@
+# ── .NET ──
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.csproj.user
+*.dbmdl
+*.jfm
+*.dll
+*.exe
+*.pdb
+*.vs/
+
+# ── Node / Next.js ──
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Environment (secrets) ──
+.env
+.env.local
+.env.*.local
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── IDE ──
+.idea/
+*.sln.docstates
+.vscode/settings.json
+
+# ── QwenPaw ──
+.qwenpaw/
+
+# ── Docker ──
+.docker/

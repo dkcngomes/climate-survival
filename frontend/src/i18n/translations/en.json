@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "Climate Survival",
+    "subtitle": "Climate-adaptive growing & prepping for what's coming",
+    "newLocation": "New Location"
+  },
+  "hero": {
+    "title": "Survive & Thrive Through Climate Change",
+    "description": "See what to <strong>buy and stock</strong> before prices rise, plus which <strong>crops to plant</strong> that will survive the coming weather changes — with harvest dates starting from this week."
+  },
+  "location": {
+    "title": "Select Your Location",
+    "description": "Choose your country or use browser geolocation for precise results.",
+    "detecting": "Detecting your country...",
+    "country": "Country",
+    "selectCountry": "— Select a country —",
+    "getRecommendations": "Get Recommendations",
+    "or": "OR",
+    "useMyLocation": "Use My Current Location",
+    "usingLocation": "Using your browser location"
+  },
+  "loading": "Analyzing climate data for your location...",
+  "error": {
+    "title": "Something went wrong",
+    "tryAgain": "Try Again"
+  },
+  "climate": {
+    "outlook": "Climate Outlook",
+    "forecastConfidence": "Forecast confidence",
+    "temperature": "Temperature",
+    "precipitation": "Precipitation",
+    "seasonalAnomaly": "seasonal anomaly",
+    "hydrometeo": "Hydrometeorological Data",
+    "soilMoisture": "Soil Moisture",
+    "dry": "Dry",
+    "saturated": "Saturated",
+    "drought": "Drought",
+    "floodRisk": "Flood Risk",
+    "stormRisk": "Storm Risk",
+    "riverDischarge": "River discharge",
+    "maxWindGust": "Max wind gust",
+    "precip3day": "3-day precip",
+    "peakIntensity": "Peak intensity",
+    "detectedSignals": "Detected Climate Signals"
+  },
+  "forecast": {
+    "horizon": "Forecast Horizon",
+    "horizonDesc": "{{period}} — storage and growing recommendations are sized based on this forecast for your area."
+  },
+  "stockUp": {
+    "title": "Stock Up — What to Buy Now",
+    "description": "These items are likely to increase in price or become scarce based on the climate signals detected. Pre-purchase now.",
+    "action": "Action",
+    "storage": "Storage"
+  },
+  "grow": {
+    "title": "Grow Your Own — Crops for the Coming Conditions",
+    "description": "These crops are matched to survive the forecast weather changes in your area. Plant now for harvest in the coming weeks and months.",
+    "strategy": "Growing Strategy for Your Area",
+    "whyGrow": "Why grow it",
+    "planting": "Planting",
+    "tip": "Tip",
+    "plantBy": "Plant by",
+    "harvest": "Harvest",
+    "harvestIn": "Harvest in",
+    "days": "days",
+    "match": "match",
+    "heat": "Heat",
+    "cold": "Cold",
+    "drought": "Drought",
+    "flood": "Flood"
+  },
+  "noStorage": {
+    "title": "Storage: No Urgent Action Needed",
+    "description": "Climate conditions in your area are normal. No urgent stockpiling needed, but the growing recommendations below can help build long-term food security."
+  },
+  "risk": {
+    "overall": "Overall Climate Risk Level",
+    "items": "{{count}} item recommended for pre-purchase",
+    "items_plural": "{{count}} items recommended for pre-purchase",
+    "itemsAndCrops": "{{items}} to stock up on · {{crops}} crops recommended to plant"
+  },
+  "footer": {
+    "dataSources": "Data sources: Open-Meteo (seasonal climate forecast, weather, flood API) & World Bank (commodity prices)",
+    "generated": "Generated {{date}}",
+    "developedBy": "Developed by"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "Have a question, suggestion, or bug report? We'd love to hear from you.",
+    "backToHome": "Back to Home",
+    "name": "Name",
+    "namePlaceholder": "Your full name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "subject": "Subject",
+    "subjectPlaceholder": "— Select a subject —",
+    "subjectBug": "Bug Report",
+    "subjectFeature": "Feature Request",
+    "subjectData": "Data Question",
+    "subjectPartner": "Partnership",
+    "subjectOther": "Other",
+    "message": "Message",
+    "messagePlaceholder": "Tell us more about your question or feedback...",
+    "send": "Send Message",
+    "sending": "Sending...",
+    "thankYou": "Thank You!",
+    "successMessage": "Your message has been received. We'll get back to you as soon as possible.",
+    "errorGeneric": "Something went wrong. Please try again later."
+  }
+}

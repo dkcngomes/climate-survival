@@ -1,0 +1,6 @@
+@ClimateAdvisor.Api_HostAddress = http://localhost:5019
+
+GET {{ClimateAdvisor.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
