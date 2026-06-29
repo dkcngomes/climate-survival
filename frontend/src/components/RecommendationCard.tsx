@@ -61,11 +61,11 @@ function ProductImage({ itemName }: { itemName: string }) {
 
   if (imageUrl && !error) {
     return (
-      <div className="w-full h-32 rounded-xl overflow-hidden bg-white">
+      <div className="w-full h-32 rounded-xl overflow-hidden bg-white group">
         <img
           src={imageUrl}
           alt={itemName}
-          className="w-full h-full object-contain p-2"
+          className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-110"
           onError={() => setError(true)}
           loading="lazy"
         />
@@ -82,8 +82,16 @@ export default function RecommendationCard({ item, index, countryCode }: Props) 
   const icon = categoryIcons[item.category] || "📦";
   const isSriLanka = countryCode === "LK";
 
+  const animationDelay = `${(index % 6) * 100}ms`;
+
   return (
-    <div className={`rounded-2xl border-2 p-5 ${colors.bg} transition-all hover:shadow-md`}>
+    <div
+      className={`rounded-2xl border-2 p-5 ${colors.bg} card-lift opacity-0 animate-fade-in`}
+      style={{
+        animationDelay,
+        animationFillMode: "forwards",
+      }}
+    >
       {/* Product image */}
       <div className="mb-3">
         <ProductImage itemName={item.itemName} />

@@ -43,16 +43,16 @@ export default function ClimateOverview({ forecast }: Props) {
 
       {/* Seasonal Anomaly metrics */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-gray-50 rounded-xl p-4">
+        <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors card-lift">
           <p className="text-xs text-gray-700 uppercase tracking-wide">{t("climate.temperature")}</p>
-          <p className={`text-2xl font-bold mt-1 ${(forecast.temperatureAnomaly ?? 0) > 0 ? "text-red-600" : "text-blue-600"}`}>
+          <p className={`text-2xl font-bold mt-1 animate-count-up ${(forecast.temperatureAnomaly ?? 0) > 0 ? "text-red-600" : "text-blue-600"}`}>
             {forecast.temperatureAnomaly != null
               ? `${forecast.temperatureAnomaly > 0 ? "+" : ""}${forecast.temperatureAnomaly.toFixed(1)}°C`
               : "N/A"}
           </p>
           <p className="text-xs text-gray-600 mt-1">{t("climate.seasonalAnomaly")}</p>
         </div>
-        <div className="bg-gray-50 rounded-xl p-4">
+        <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors card-lift">
           <p className="text-xs text-gray-700 uppercase tracking-wide">{t("climate.precipitation")}</p>
           <p className={`text-2xl font-bold mt-1 ${(forecast.precipitationAnomaly ?? 0) > 0 ? "text-blue-600" : "text-amber-600"}`}>
             {forecast.precipitationAnomaly != null

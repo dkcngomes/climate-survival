@@ -50,17 +50,23 @@ export default function CropRecommendationCard({ crop, index }: Props) {
   const imgSrc = crop.imageUrl || "";
 
   return (
-    <div className={`rounded-2xl border-2 p-4 ${colors.bg} transition-all hover:shadow-md`}>
+    <div
+      className={`rounded-2xl border-2 p-4 ${colors.bg} card-lift opacity-0 animate-fade-in`}
+      style={{
+        animationDelay: `${(index % 6) * 100 + 300}ms`,
+        animationFillMode: "forwards",
+      }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           {/* Crop image */}
           {imgSrc ? (
-            <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-gray-200 bg-white">
+            <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-gray-200 bg-white group">
               <img
                 src={imgSrc}
                 alt={crop.cropName}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-125"
                 loading="lazy"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = "none";
