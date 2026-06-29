@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ItemRecommendation } from "@/types";
 import { useLocalization } from "@/i18n/LocalizationContext";
 import { getAffiliateSearchUrl } from "@/config/affiliate";
+import { fetchProductImage } from "@/services/productImages";
 
 interface Props {
   item: ItemRecommendation;
@@ -26,7 +28,53 @@ const categoryIcons: Record<string, string> = {
   Beverages: "🧃",
   Essentials: "🔋",
   Agriculture: "🌱",
+  Health: "💊",
+  Home: "🔧",
 };
+
+/** Renders a product image with emoji fallback */
+function ProductImage({ itemName }: { itemName: string }) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(false);
+
+    fetchProductImage(itemName).then((url) => {
+      if (!cancelled) {
+        setImageUrl(url);
+        setLoading(false);
+      }
+    });
+  }, [itemName]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-32 bg-gray-200 animate-pulse rounded-xl flex items-center justify-center">
+        <span className="text-gray-400 text-xs">Loading...</span>
+      </div>
+    );
+  }
+
+  if (imageUrl && !error) {
+    return (
+      <div className="w-full h-32 rounded-xl overflow-hidden bg-white">
+        <img
+          src={imageUrl}
+          alt={itemName}
+          className="w-full h-full object-contain p-2"
+          onError={() => setError(true)}
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  return null; // No image — caller falls back
+}
 
 export default function RecommendationCard({ item, index, countryCode }: Props) {
   const { t } = useLocalization();
@@ -36,6 +84,11 @@ export default function RecommendationCard({ item, index, countryCode }: Props) 
 
   return (
     <div className={`rounded-2xl border-2 p-5 ${colors.bg} transition-all hover:shadow-md`}>
+      {/* Product image */}
+      <div className="mb-3">
+        <ProductImage itemName={item.itemName} />
+      </div>
+
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <span className="text-3xl">{icon}</span>
@@ -74,12 +127,10 @@ export default function RecommendationCard({ item, index, countryCode }: Props) 
         <a
           href={getAffiliateSearchUrl(item.itemName)}
           target="_blank"
-          rel="noopener noreferrer sponsored"
-          className="mt-3 inline-flex items-center gap-1.5 text-xs text-orange-600 hover:text-orange-800 transition-colors"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
         >
-          <span>🛒</span>
-          <span>Buy on Daraz</span>
-          <span className="text-[10px] opacity-70">(affiliate)</span>
+          🛒 Buy on Daraz
         </a>
       )}
     </div>
