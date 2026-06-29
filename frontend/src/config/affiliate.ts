@@ -1,62 +1,63 @@
 /**
  * Affiliate link configuration for Climate Survival.
  *
- * To use your own Amazon Associates tracking ID:
- * 1. Sign up at https://affiliate-program.amazon.com/
- * 2. Replace the value below with your tracking ID
+ * To use Daraz Affiliate Program:
+ * 1. Sign up at https://affiliate.daraz.com/
+ * 2. Get your Affiliate ID (looks like a short code)
+ * 3. Replace the value below with your affiliate ID
  */
 
 export const AFFILIATE_CONFIG = {
-  amazon: {
-    tag: "climatisurvi-20", // ← Replace with your own Amazon Associates tag
-    baseUrl: "https://www.amazon.com",
+  daraz: {
+    affiliateId: "YOUR_DARAZ_AFFILIATE_ID", // ← Replace with your Daraz affiliate ID
+    baseUrl: "https://www.daraz.lk",
   },
 } as const;
 
 /**
- * Map item names to Amazon search keywords for relevant product results.
+ * Map item names to Daraz search keywords for relevant product results.
  * Falls back to the item name itself if not in the map.
  */
-const amazonSearchMap: Record<string, string> = {
-  "Bottled Water": "water storage containers",
-  Rice: "rice bulk supply",
-  "Flour / Wheat": "flour bulk",
-  "Canned Food (Mixed)": "canned food variety pack",
-  "Cooking Oil": "cooking oil bulk",
-  "Dried Beans": "dried beans bulk",
-  Sugar: "sugar bulk",
-  Salt: "salt bulk",
-  "Pasta / Noodles": "pasta bulk",
-  "Oats / Cereal": "oatmeal bulk",
-  "Powdered Milk": "powdered milk bulk",
-  "Coffee / Tea": "coffee beans bulk",
-  "First Aid Kit": "first aid kit emergency",
-  "Water Filter": "water filter emergency",
-  "Seeds (Non-Hybrid)": "non hybrid seeds garden",
-  "Gardening Tools": "gardening tools set",
-  "Batteries": "batteries bulk",
-  Flashlights: "flashlights emergency",
-  "Solar Charger": "solar charger portable",
-  "Fuel (Propane)": "propane camping",
-  Multivitamins: "multivitamins bulk",
-  "Freeze-Dried Food": "freeze dried food emergency",
-  "Prescription Meds": "emergency medication organizer",
-  "Hygiene Products": "emergency hygiene kit",
-  "Bleach / Sanitizer": "water purification tablets",
-  Fertilizer: "garden fertilizer organic",
-  "Soil / Compost": "potting soil organic",
-  "Pesticide (Natural)": "natural pesticide garden",
+const darazSearchMap: Record<string, string> = {
+  "Bottled Water": "water storage container",
+  Rice: "rice 5kg",
+  "Flour / Wheat": "wheat flour 1kg",
+  "Canned Food (Mixed)": "canned food",
+  "Cooking Oil": "cooking oil 1L",
+  "Dried Beans": "beans dried",
+  Sugar: "sugar 1kg",
+  Salt: "salt packet",
+  "Pasta / Noodles": "pasta noodles",
+  "Oats / Cereal": "oatmeal cereal",
+  "Powdered Milk": "milk powder 1kg",
+  "Coffee / Tea": "coffee tea",
+  "First Aid Kit": "first aid kit",
+  "Water Filter": "water purifier filter",
+  "Seeds (Non-Hybrid)": "vegetable seeds",
+  "Gardening Tools": "garden tools set",
+  "Batteries": "batteries pack",
+  Flashlights: "torch light emergency",
+  "Solar Charger": "solar panel charger",
+  "Fuel (Propane)": "gas stove camping",
+  Multivitamins: "multivitamin tablets",
+  "Freeze-Dried Food": "dry food pack",
+  "Prescription Meds": "medicine organizer box",
+  "Hygiene Products": "soap hand sanitizer",
+  "Bleach / Sanitizer": "disinfectant liquid",
+  Fertilizer: "plant fertilizer organic",
+  "Soil / Compost": "potting soil bag",
+  "Pesticide (Natural)": "natural pesticide plants",
   "Drip Irrigation": "drip irrigation kit",
-  "Frost Blanket": "frost protection fabric",
-  "Shade Cloth": "shade cloth garden",
-  "Greenhouse Supplies": "greenhouse small",
-  "Rain Barrel": "rain barrel water collection",
-  "Seed Trays": "seed starting trays",
-  "Grow Lights": "grow lights indoor",
+  "Frost Blanket": "plant cover frost",
+  "Shade Cloth": "shade net garden",
+  "Greenhouse Supplies": "greenhouse plastic",
+  "Rain Barrel": "water collection tank",
+  "Seed Trays": "seedling tray",
+  "Grow Lights": "grow led light plants",
 };
 
-export function getAmazonSearchUrl(itemName: string): string {
-  const searchTerm = amazonSearchMap[itemName] || itemName;
+export function getAffiliateSearchUrl(itemName: string): string {
+  const searchTerm = darazSearchMap[itemName] || itemName;
   const encoded = encodeURIComponent(searchTerm);
-  return `${AFFILIATE_CONFIG.amazon.baseUrl}/s?k=${encoded}&tag=${AFFILIATE_CONFIG.amazon.tag}`;
+  return `${AFFILIATE_CONFIG.daraz.baseUrl}/catalog/?q=${encoded}&af=${AFFILIATE_CONFIG.daraz.affiliateId}`;
 }

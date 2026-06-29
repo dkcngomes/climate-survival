@@ -2,7 +2,7 @@
 
 import { ItemRecommendation } from "@/types";
 import { useLocalization } from "@/i18n/LocalizationContext";
-import { getAmazonSearchUrl } from "@/config/affiliate";
+import { getAffiliateSearchUrl } from "@/config/affiliate";
 
 interface Props {
   item: ItemRecommendation;
@@ -69,13 +69,13 @@ export default function RecommendationCard({ item, index }: Props) {
 
       {/* Affiliate link */}
       <a
-        href={getAmazonSearchUrl(item.itemName)}
+        href={getAffiliateSearchUrl(item.itemName)}
         target="_blank"
         rel="noopener noreferrer sponsored"
         className="mt-3 inline-flex items-center gap-1.5 text-xs text-orange-600 hover:text-orange-800 transition-colors"
       >
         <span>🛒</span>
-        <span>Buy on Amazon</span>
+        <span>Buy on Daraz</span>
         <span className="text-[10px] opacity-70">(affiliate)</span>
       </a>
     </div>
