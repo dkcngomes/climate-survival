@@ -92,10 +92,4 @@ Hugging Face Spaces use `appsettings.json` by default. For secrets, add **Reposi
 
 > Note: HF Spaces inject secrets as environment variables. .NET parses `GEMINI__APIKEY` as `Gemini:ApiKey` automatically.
 
----
-
-## ⚠️ Important: Don't Use QR Login
-
-When Hugging Face asks you to authenticate via Git, **use a User Access Token**, not QR code (since we're in a terminal).
-
-Generate a token at: https://huggingface.co/settings/tokens
+> **Currency localization** uses the Frankfurter API (`api.frankfurter.app`) — it's **free and requires no API key**, so no env var needed.
