@@ -199,7 +199,10 @@ function HomeContent() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                   🛒 {t("stockUp.title")}
                 </h2>
-                <p className="text-gray-700 text-sm mb-6">{t("stockUp.description")}</p>
+                <p className="text-gray-700 text-sm mb-1">{t("stockUp.description")}</p>
+                <p className="text-[11px] text-gray-500 mb-6 italic">
+                  🛍️ As an Amazon Associate we earn from qualifying purchases — helps keep this site free.
+                </p>
                 <div className="space-y-4">
                   {data.recommendations.map((item, i) => (
                     <RecommendationCard key={`${item.itemName}-${i}`} item={item} index={i} />
