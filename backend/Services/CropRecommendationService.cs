@@ -624,22 +624,28 @@ public class CropRecommendationService : ICropRecommendationService
         if (ImageCache.TryGetValue(cropName, out var cached))
             return cached;
 
-        try
+        // Retry once on failure for transient issues
+        for (var attempt = 1; attempt <= 2; attempt++)
         {
-            var wikiTitle = MapToWikiTitle(cropName);
-            var url = $"https://en.wikipedia.org/api/rest_v1/page/summary/{wikiTitle}";
-            using var req = new HttpRequestMessage(HttpMethod.Get, url);
-            req.Headers.UserAgent.ParseAdd("ClimateSurvival/1.0 (crop-image-fetcher)");
+            try
+            {
+                var wikiTitle = MapToWikiTitle(cropName);
+                var url = $"https://en.wikipedia.org/api/rest_v1/page/summary/{wikiTitle}";
+                using var req = new HttpRequestMessage(HttpMethod.Get, url);
+                req.Headers.UserAgent.ParseAdd("ClimateSurvival/1.0 (crop-image-fetcher)");
 
-            using var response = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct);
-            if (!response.IsSuccessStatusCode)
-                return (null, null); // Don't cache failures — allow retry next time
+                using var response = await _http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct);
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (attempt == 1) { await Task.Delay(1000, ct); continue; }
+                    return (null, null); // Don't cache failures — allow retry next time
+                }
 
-            var json = await response.Content.ReadFromJsonAsync<WikipediaSummary>(cancellationToken: ct);
-            var imageUrl = json?.Thumbnail?.Source;
-            var wikiUrl = json?.ContentUrls?.Desktop?.Page;
+                var json = await response.Content.ReadFromJsonAsync<WikipediaSummary>(cancellationToken: ct);
+                var imageUrl = json?.Thumbnail?.Source;
+                var wikiUrl = json?.ContentUrls?.Desktop?.Page;
 
-            // Only cache if we got a valid image URL
+                // Only cache if we got a valid image URL
             if (!string.IsNullOrEmpty(imageUrl))
                 ImageCache.TryAdd(cropName, (imageUrl, wikiUrl));
 
@@ -647,9 +653,13 @@ public class CropRecommendationService : ICropRecommendationService
         }
         catch
         {
+            if (attempt == 1) { await Task.Delay(1000, ct); continue; }
             return (null, null); // Don't cache failures — allow retry next time
         }
     }
+
+    return (null, null); // Shouldn't reach here
+}
 
     private static string MapToWikiTitle(string cropName) => cropName switch
     {
