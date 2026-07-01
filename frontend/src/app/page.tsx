@@ -53,6 +53,9 @@ function HomeContent() {
   }, [setLocaleFromCountry]);
 
   const handleLocationReady = async (lat: number, lng: number, countryCode?: string) => {
+    // Scroll to top so user sees loading state and results
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
     setLocation({ lat, lng, status: "success" });
     setSelectedCountry(countryCode);
     if (countryCode) {
