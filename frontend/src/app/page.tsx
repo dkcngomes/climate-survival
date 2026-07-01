@@ -37,6 +37,7 @@ function HomeContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>();
+  const [activeTab, setActiveTab] = useState("overview");
 
   // On mount, set currency from IP-detected country
   useEffect(() => {
@@ -105,10 +106,26 @@ function HomeContent() {
   // Currency display in header
   const currencyLabel = `${locale.currencyCode} (${locale.currencySymbol})`;
 
+  // Build tab definitions — adapts based on available data
+  const tabs = [
+    { id: "overview", label: "📊 Overview", badge: data?.overallRiskLevel ?? null },
+    {
+      id: "stockup",
+      label: `🛒 Stock Up${data && data.recommendations.length > 0 ? ` (${data.recommendations.length})` : ""}`,
+    },
+    {
+      id: "grow",
+      label: `🌱 Grow${cropData && cropData.crops.length > 0 ? ` (${cropData.crops.length})` : ""}`,
+    },
+    ...(selectedCountry === "LK" ? [{ id: "prices", label: "💰 Prices" }] : []),
+    { id: "alerts", label: "📱 Alerts" },
+  ];
+
   return (
     <div className="min-h-screen animate-gradient bg-gradient-to-br from-emerald-50 via-white to-sky-50">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+        {/* Top row: brand + controls */}
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-3xl animate-float">🌍</span>
@@ -139,6 +156,29 @@ function HomeContent() {
             )}
           </div>
         </div>
+
+        {/* Tab bar — only when results are loaded */}
+        {data && !loading && (
+          <div className="border-t border-gray-100">
+            <div className="max-w-5xl mx-auto px-4">
+              <nav className="flex gap-1 overflow-x-auto py-2 scrollbar-none" style={{ scrollbarWidth: 'none' }}>
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-emerald-100 text-emerald-800 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -224,84 +264,93 @@ function HomeContent() {
 
         {data && !loading && (
           <div>
-            {/* Overall risk banner */}
-            <AnimatedSection animation="scale">
-              <div className={`mb-6 rounded-2xl border-2 p-4 text-center ${riskBadge(data.overallRiskLevel)}`}>
-                <p className="text-sm uppercase tracking-wide font-semibold">{t("risk.overall")}</p>
-                <p className="text-3xl font-extrabold mt-1">{data.overallRiskLevel}</p>
-                <p className="text-sm mt-1">
-                  {t("risk.itemsAndCrops", {
-                    items: `${data.recommendations.length} ${t("stockUp.title").toLowerCase()}`,
-                    crops: `${cropData?.totalCrops ?? 0} ${t("grow.title").toLowerCase()}`,
-                  })}
-                </p>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection>
-              <ClimateOverview forecast={data.forecast} />
-            </AnimatedSection>
-
-            {/* Climate Charts — wrapped in an id for PDF capture */}
-            <AnimatedSection>
-              <div id="climate-charts-section" className="mb-8">
-                <ClimateCharts forecast={data.forecast} />
-              </div>
-            </AnimatedSection>
-
-            {/* Forecast period info */}
-            {data.forecast.forecastPeriodLabel && (
-              <AnimatedSection animation="fade">
-                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl px-5 py-3 flex items-center gap-3 text-sm">
-                  <span className="text-blue-500 text-lg animate-float">📊</span>
-                  <div>
-                    <p className="font-semibold text-gray-900">{t("forecast.horizon")}</p>
-                    <p className="text-gray-800">
-                      {t("forecast.horizonDesc", { period: data.forecast.forecastPeriodLabel })}
+            {/* ---------- 📊 Overview Tab ---------- */}
+            {activeTab === "overview" && (
+              <div>
+                {/* Overall risk banner */}
+                <AnimatedSection animation="scale">
+                  <div className={`mb-6 rounded-2xl border-2 p-4 text-center ${riskBadge(data.overallRiskLevel)}`}>
+                    <p className="text-sm uppercase tracking-wide font-semibold">{t("risk.overall")}</p>
+                    <p className="text-3xl font-extrabold mt-1">{data.overallRiskLevel}</p>
+                    <p className="text-sm mt-1">
+                      {t("risk.itemsAndCrops", {
+                        items: `${data.recommendations.length} ${t("stockUp.title").toLowerCase()}`,
+                        crops: `${cropData?.totalCrops ?? 0} ${t("grow.title").toLowerCase()}`,
+                      })}
                     </p>
                   </div>
-                </div>
-              </AnimatedSection>
-            )}
+                </AnimatedSection>
 
-            {/* Food Storage Section */}
-            {data.recommendations.length > 0 && (
-              <AnimatedSection>
-                <div className="mb-10">
-                  <div className="flex items-start justify-between gap-4 mb-2">
-                    <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                      🛒 {t("stockUp.title")}
-                    </h2>
-                    <PdfDownloadButton data={data} cropData={cropData} countryCode={selectedCountry} />
+                <AnimatedSection>
+                  <ClimateOverview forecast={data.forecast} />
+                </AnimatedSection>
+
+                {/* Climate Charts — wrapped in an id for PDF capture */}
+                <AnimatedSection>
+                  <div id="climate-charts-section" className="mb-8">
+                    <ClimateCharts forecast={data.forecast} />
                   </div>
-                  <p className="text-gray-700 text-sm mb-1">{t("stockUp.description")}</p>
-                  {selectedCountry === "LK" && (
-                    <p className="text-[11px] text-gray-500 mb-6 italic">
-                      🛍️ As a Daraz Affiliate we earn from qualifying purchases — helps keep this site free.
-                    </p>
-                  )}
-                  <div className="space-y-4">
-                    {data.recommendations.map((item, i) => (
-                      <RecommendationCard key={`${item.itemName}-${i}`} item={item} index={i} countryCode={selectedCountry} />
-                    ))}
-                  </div>
-                </div>
-              </AnimatedSection>
+                </AnimatedSection>
+
+                {/* Forecast period info */}
+                {data.forecast.forecastPeriodLabel && (
+                  <AnimatedSection animation="fade">
+                    <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl px-5 py-3 flex items-center gap-3 text-sm">
+                      <span className="text-blue-500 text-lg animate-float">📊</span>
+                      <div>
+                        <p className="font-semibold text-gray-900">{t("forecast.horizon")}</p>
+                        <p className="text-gray-800">
+                          {t("forecast.horizonDesc", { period: data.forecast.forecastPeriodLabel })}
+                        </p>
+                      </div>
+                    </div>
+                  </AnimatedSection>
+                )}
+              </div>
             )}
 
-            {/* No Storage message — always before Grow section */}
-            {data.recommendations.length === 0 && (
-              <AnimatedSection animation="scale">
-                <div className="mb-10 bg-green-50 border-2 border-green-200 rounded-2xl p-8 text-center">
-                  <p className="text-4xl mb-4 animate-float">✅</p>
-                  <h3 className="text-xl font-bold text-green-800 mb-2">{t("noStorage.title")}</h3>
-                  <p className="text-gray-800 max-w-lg mx-auto">{t("noStorage.description")}</p>
-                </div>
-              </AnimatedSection>
+            {/* ---------- 🛒 Stock Up Tab ---------- */}
+            {activeTab === "stockup" && (
+              <div>
+                {data.recommendations.length > 0 && (
+                  <AnimatedSection>
+                    <div className="mb-10">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                          🛒 {t("stockUp.title")}
+                        </h2>
+                        <PdfDownloadButton data={data} cropData={cropData} countryCode={selectedCountry} />
+                      </div>
+                      <p className="text-gray-700 text-sm mb-1">{t("stockUp.description")}</p>
+                      {selectedCountry === "LK" && (
+                        <p className="text-[11px] text-gray-500 mb-6 italic">
+                          🛍️ As a Daraz Affiliate we earn from qualifying purchases — helps keep this site free.
+                        </p>
+                      )}
+                      <div className="space-y-4">
+                        {data.recommendations.map((item, i) => (
+                          <RecommendationCard key={`${item.itemName}-${i}`} item={item} index={i} countryCode={selectedCountry} />
+                        ))}
+                      </div>
+                    </div>
+                  </AnimatedSection>
+                )}
+
+                {/* No Storage message */}
+                {data.recommendations.length === 0 && (
+                  <AnimatedSection animation="scale">
+                    <div className="mb-10 bg-green-50 border-2 border-green-200 rounded-2xl p-8 text-center">
+                      <p className="text-4xl mb-4 animate-float">✅</p>
+                      <h3 className="text-xl font-bold text-green-800 mb-2">{t("noStorage.title")}</h3>
+                      <p className="text-gray-800 max-w-lg mx-auto">{t("noStorage.description")}</p>
+                    </div>
+                  </AnimatedSection>
+                )}
+              </div>
             )}
 
-            {/* Crop / Growing Section */}
-            {cropData && cropData.crops.length > 0 && (
+            {/* ---------- 🌱 Grow Tab ---------- */}
+            {activeTab === "grow" && cropData && cropData.crops.length > 0 && (
               <div className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                   🌱 {t("grow.title")}
@@ -328,25 +377,30 @@ function HomeContent() {
               </div>
             )}
 
-            {/* Sri Lanka Market Prices (CBSL) — only for LK users */}
-            <AnimatedSection>
-              <div className="mt-10 mb-4">
-                <SriLankaPrices countryCode={selectedCountry} />
-              </div>
-            </AnimatedSection>
+            {/* ---------- 💰 Prices Tab (LK only) ---------- */}
+            {activeTab === "prices" && selectedCountry === "LK" && (
+              <AnimatedSection>
+                <div className="mb-4">
+                  <SriLankaPrices countryCode={selectedCountry} />
+                </div>
+              </AnimatedSection>
+            )}
 
-            {/* SMS Alerts */}
-            <AnimatedSection>
-              <div className="mt-10 mb-4">
-                <AlertSubscription
-                  latitude={location.lat}
-                  longitude={location.lng}
-                  locationName={data.forecast.locationName}
-                  countryCode={selectedCountry}
-                />
-              </div>
-            </AnimatedSection>
+            {/* ---------- 📱 Alerts Tab ---------- */}
+            {activeTab === "alerts" && (
+              <AnimatedSection>
+                <div className="mb-4">
+                  <AlertSubscription
+                    latitude={location.lat}
+                    longitude={location.lng}
+                    locationName={data.forecast.locationName}
+                    countryCode={selectedCountry}
+                  />
+                </div>
+              </AnimatedSection>
+            )}
 
+            {/* Footer info — always shown */}
             <AnimatedSection animation="fade">
               <div className="mt-8 text-center text-xs text-gray-600 border-t border-gray-200 pt-6">
                 {t("footer.dataSources")}
