@@ -11,8 +11,51 @@ import type {
   IpCountryResult,
 } from "@/types";
 
+// ─── Helpers for resilience against HF Spaces cold starts ───
+
+/** Fetch with AbortController timeout (default 25s). */
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 25000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+/**
+ * Fetch with one automatic retry on timeout (AbortError) or 504 Gateway Timeout.
+ * HF Spaces free tier goes to sleep after inactivity; the retry gives it time to
+ * wake up while the first attempt already triggered the cold start.
+ */
+async function fetchWithRetry(url: string, options: RequestInit = {}) {
+  for (let attempt = 0; attempt <= 1; attempt++) {
+    try {
+      const res = await fetchWithTimeout(url, options);
+      if (res.status === 504 && attempt === 0) {
+        // Gateway Timeout — likely HF cold start → wait and retry
+        await new Promise(r => setTimeout(r, 2000));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      if (attempt === 0 && err instanceof DOMException && err.name === "AbortError") {
+        // Timeout — likely cold start → wait and retry
+        await new Promise(r => setTimeout(r, 2000));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error("Service temporarily unavailable. Please try again.");
+}
+
+// ─── API functions ───
+
 export async function fetchRecommendations(lat: number, lng: number) {
-  const res = await fetch(`${API_BASE}/api/recommendations?lat=${lat}&lng=${lng}`);
+  const res = await fetchWithRetry(`${API_BASE}/api/recommendations?lat=${lat}&lng=${lng}`);
   if (!res.ok) throw new Error(`Recommendations failed: ${res.statusText}`);
   return res.json() as Promise<RecommendationResponse>;
 }
@@ -20,7 +63,7 @@ export async function fetchRecommendations(lat: number, lng: number) {
 export async function fetchCropRecommendations(lat: number, lng: number, countryCode?: string) {
   let url = `${API_BASE}/api/crops?lat=${lat}&lng=${lng}`;
   if (countryCode) url += `&countryCode=${countryCode}`;
-  const res = await fetch(url);
+  const res = await fetchWithRetry(url);
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: "Crop request failed" }));
     throw new Error(err.error || `HTTP ${res.status}`);
@@ -109,13 +152,13 @@ export async function fetchSriLankaPrices() {
 // ─── SMS Alerts ───
 
 export async function fetchCarriers() {
-  const res = await fetch(`${API_BASE}/api/alerts/carriers`);
+  const res = await fetchWithRetry(`${API_BASE}/api/alerts/carriers`);
   if (!res.ok) throw new Error(`Carriers failed: ${res.statusText}`);
   return res.json() as Promise<import("@/types").CarrierEntry[]>;
 }
 
 export async function subscribeToAlerts(req: import("@/types").SubscribeRequest) {
-  const res = await fetch(`${API_BASE}/api/alerts/subscribe`, {
+  const res = await fetchWithRetry(`${API_BASE}/api/alerts/subscribe`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(req),
@@ -128,7 +171,7 @@ export async function subscribeToAlerts(req: import("@/types").SubscribeRequest)
 }
 
 export async function unsubscribeFromAlerts(subscriptionId: string) {
-  const res = await fetch(`${API_BASE}/api/alerts/unsubscribe`, {
+  const res = await fetchWithRetry(`${API_BASE}/api/alerts/unsubscribe`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ subscriptionId }),
@@ -141,7 +184,7 @@ export async function unsubscribeFromAlerts(subscriptionId: string) {
 }
 
 export async function sendTestSms(phoneNumber: string, carrierCode: string) {
-  const res = await fetch(`${API_BASE}/api/alerts/test`, {
+  const res = await fetchWithRetry(`${API_BASE}/api/alerts/test`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phoneNumber, carrierCode }),
