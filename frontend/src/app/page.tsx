@@ -176,7 +176,7 @@ function HomeContent() {
                     {activeTab === tab.id && (
                       <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 
                                      border-l-[6px] border-r-[6px] border-t-[6px] 
-                                     border-l-transparent border-r-transparent border-t-emerald-500" />
+                                     border-l-transparent border-r-transparent border-t-emerald-500 animate-pulse" />
                     )}
                   </button>
                 ))}
