@@ -61,6 +61,7 @@ Sent via Climate Survival Contact Form
 
             using var client = new SmtpClient();
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            client.Timeout = 10000; // 10s send timeout
             await client.ConnectAsync(smtpHost, smtpPort, MailKit.Security.SecureSocketOptions.StartTls, ct);
             await client.AuthenticateAsync(smtpUser, smtpPass, ct);
             await client.SendAsync(mimeMessage, ct);

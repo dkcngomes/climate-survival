@@ -47,16 +47,28 @@ public class AlertService : IAlertService
 
         Subscriptions[sub.Id] = sub;
 
-        // Send a welcome/test SMS
+        // Send welcome SMS in background so subscribe responds fast
+        // (SMTP can be slow from Hugging Face; don't block the response)
         var gatewayEmail = CarrierInfo.ToSmsEmail(sub.PhoneNumber, sub.CarrierCode);
         if (gatewayEmail != null)
         {
-            await _email.SendRawAsync(
-                gatewayEmail,
-                "Climate Survival: Alert Active",
-                $"✅ You're subscribed!\n\nLocation: {request.LocationName ?? "your area"}\nAlerts: {sub.AlertTypes}\n\nYou'll get SMS when climate conditions change.\n\n— Climate Survival",
-                ct
-            );
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                    await _email.SendRawAsync(
+                        gatewayEmail,
+                        "Climate Survival: Alert Active",
+                        $"✅ You're subscribed!\n\nLocation: {request.LocationName ?? "your area"}\nAlerts: {sub.AlertTypes}\n\nYou'll get SMS when climate conditions change.\n\n— Climate Survival",
+                        cts.Token
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Welcome SMS skipped (non-critical) for {Phone}", sub.PhoneNumber);
+                }
+            });
         }
 
         _logger.LogInformation("New SMS subscription: {Id} → {Phone} ({Carrier})", sub.Id, sub.PhoneNumber, sub.CarrierCode);
