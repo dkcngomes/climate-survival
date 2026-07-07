@@ -14,7 +14,7 @@
 # ── Proxy API requests to Hugging Face Space ──
 [[redirects]]
   from = "/api/*"
-  to   = "https://codemonkeytrouble-climate-survival-api.hf.space/api/:splat"
+  to   = "https://huggingface.co/spaces/codemonkeytrouble/climate-survival-api/:splat"
   status = 200
   force = true
 
